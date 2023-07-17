@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Show</title>
+    <!-- {{!-- Bootstrap4 --}} -->
+    <link
+      rel="stylesheet"
+      href="https://bootswatch.com/5/lux/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="card">
+      <div class="card-header"><%= camp.title %></div>
+      <div class="card-body">
+        <%= camp._id %> <br />
+        <%= camp.location %>
+      </div>
+      <div>
+        <a href="./<%= camp._id  %>/edit"><button>Edit</button></a>
+        <a href="."><button>See Campgrounds</button></a>
+        <form action="/campgrounds/<%= camp._id %>?_method=DELETE" method="POST">
+            <button>Delete</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
