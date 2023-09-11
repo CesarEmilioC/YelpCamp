@@ -4,6 +4,9 @@ const path=require('path');
 const mongoose=require('mongoose');
 const methodOverride=require('method-override');
 const ejsMate=require('ejs-mate');
+const session=require('express-session');
+const flash=require('connect-flash');
+
 
 
 const campgrounds=require('./routes/campgrounds');
@@ -22,6 +25,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp',{
     })
 
 
+
 app.set('views', path.join(__dirname, 'views')); //Set the views folder where the html will be
 app.set('view engine', 'ejs'); //Needed to indicate that ejs will be the template
 app.engine('ejs', ejsMate);
@@ -29,6 +33,29 @@ app.engine('ejs', ejsMate);
 //MIDDLEWARE
 app.use(express.urlencoded({extended:true})); //This is needed to parse the req.body (What it does is every single request is being url encoded by express function)
 app.use(methodOverride('_method'));//To be able to fake PUT or PATCH requests
+app.use(express.static(path.join(__dirname, 'public')));
+
+//FOR SESSION MANAGEMENT
+const sessionConfig={
+    secret:"tomasSecret", 
+    resave:false, 
+    saveUninitialized: true, 
+    cookie: {
+        httpOnly: true,
+        expires: Date.now()+1000*60*60*24*7, 
+        maxAge:1000*60*60*24*7
+
+    }
+}
+app.use(session(sessionConfig));
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+})
+
 app.use('/campgrounds', campgrounds);//Whenever /campgrounds is hit use the routes in campgrounds routes
 app.use('/campgrounds/:id/reviews', reviews);//Whenever /campgrounds/:id/reviews is hit use the routes in reviews routes
 

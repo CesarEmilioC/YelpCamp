@@ -6,7 +6,7 @@ const Campground = require('../models/campground');
 const {campgroundSchema}=require('../schemas.js');
 
 const validateCampground=(req,res,next)=>{
-    const { error } = campgroundSchema.validate(req.body);
+    const { error } = campgroundSchema.validate(req.body); 
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
         throw new ExpressError(msg, 400)
@@ -18,6 +18,7 @@ const validateCampground=(req,res,next)=>{
 //show all campgrounds
 router.get('/', catchAsync(async (req,res)=>{
     const camps= await Campground.find();
+    req.flash('success', 'this is the main camgrounds')
     res.render('./campground/index', {camps})
 }));
 // create new campground form
@@ -30,6 +31,7 @@ router.post('/', validateCampground, catchAsync(async (req,res)=>{ //Called when
     const {title, location, image, price, description}=req.body.campground; //In the new.ejs form we have title and location encapsulated in the campground[attribute]
     const newCampground=new Campground({title:title, location:location, image:image, price:price, description:description});
     let thiscamp=await newCampground.save();
+    req.flash('success', 'Camp was created successfully');
     console.log(thiscamp);
     //res.redirect(/${thiscamp._id}`);
 }));
@@ -48,6 +50,7 @@ router.get('/:id', catchAsync(async (req,res)=>{
 router.put('/:id', validateCampground, catchAsync(async (req,res)=>{
     const {title, location, image, price, description}=req.body.campground;
     await Campground.findByIdAndUpdate(req.params.id,{title:title, location:location, image:image,price:price, description:description});
+    req.flash('success', 'Camp was edited successfully');
     res.redirect(`./${req.params.id}`);
 }));
 //delete a campground
