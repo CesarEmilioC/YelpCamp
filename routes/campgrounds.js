@@ -38,12 +38,20 @@ router.post('/', validateCampground, catchAsync(async (req,res)=>{ //Called when
 //Edit a campground
 router.get('/:id/edit', catchAsync(async (req,res)=>{ //Called when button edit is clicked
     const campground=await Campground.findById(req.params.id);
+    if(!campground){
+        req.flash('error', 'Campground was not found');
+        res.redirect('/campgrounds');
+    }
     res.render('./campground/edit', {campground});
 }));
 
 //Single campground info
 router.get('/:id', catchAsync(async (req,res)=>{
     const campground= await Campground.findById(req.params.id).populate('reviews');
+    if(!campground){
+        req.flash('error', 'Campground was not found');
+        res.redirect('/campgrounds');
+    }
     res.render('./campground/show', {campground})
 }));
 //Update a campground
