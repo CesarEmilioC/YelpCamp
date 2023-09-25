@@ -4,7 +4,7 @@ const catchAsync=require('../utils/catchAsync');
 const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
 const {campgroundSchema}=require('../schemas.js');
-
+const {isLoggedIn}= require('../middleware')
 const validateCampground=(req,res,next)=>{
     const { error } = campgroundSchema.validate(req.body); 
     if (error) {
@@ -22,11 +22,11 @@ router.get('/', catchAsync(async (req,res)=>{
     res.render('./campground/index', {camps})
 }));
 // create new campground form
-router.get('/new',(req,res)=>{
+router.get('/new',isLoggedIn, (req,res)=>{
     res.render('./campground/new')
 });
 //post for sending data
-router.post('/', validateCampground, catchAsync(async (req,res)=>{ //Called when the form is sent
+router.post('/', validateCampground,isLoggedIn, catchAsync(async (req,res)=>{ //Called when the form is sent
     console.log(req.body.campground);
     const {title, location, image, price, description}=req.body.campground; //In the new.ejs form we have title and location encapsulated in the campground[attribute]
     const newCampground=new Campground({title:title, location:location, image:image, price:price, description:description});
@@ -36,7 +36,7 @@ router.post('/', validateCampground, catchAsync(async (req,res)=>{ //Called when
     //res.redirect(/${thiscamp._id}`);
 }));
 //Edit a campground
-router.get('/:id/edit', catchAsync(async (req,res)=>{ //Called when button edit is clicked
+router.get('/:id/edit',isLoggedIn, catchAsync(async (req,res)=>{ //Called when button edit is clicked
     const campground=await Campground.findById(req.params.id);
     if(!campground){
         req.flash('error', 'Campground was not found');
@@ -55,14 +55,14 @@ router.get('/:id', catchAsync(async (req,res)=>{
     res.render('./campground/show', {campground})
 }));
 //Update a campground
-router.put('/:id', validateCampground, catchAsync(async (req,res)=>{
+router.put('/:id',isLoggedIn, validateCampground, catchAsync(async (req,res)=>{
     const {title, location, image, price, description}=req.body.campground;
     await Campground.findByIdAndUpdate(req.params.id,{title:title, location:location, image:image,price:price, description:description});
     req.flash('success', 'Camp was edited successfully');
     res.redirect(`./${req.params.id}`);
 }));
 //delete a campground
-router.delete('/:id', catchAsync(async (req,res)=>{ //Called when form delete is executed by the button delete
+router.delete('/:id',isLoggedIn, catchAsync(async (req,res)=>{ //Called when form delete is executed by the button delete
     const campground=await Campground.findByIdAndDelete(req.params.id);
     res.redirect('/campgrounds');
 }));

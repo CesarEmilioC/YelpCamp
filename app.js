@@ -10,8 +10,9 @@ const passport=require('passport');
 const LocalStrategy=require('passport-local');
 const User= require('./models/user');
 
-const campgrounds=require('./routes/campgrounds');
-const reviews=require('./routes/reviews');
+const userRoutes=require('./routes/users');
+const campgroundRoutes=require('./routes/campgrounds');
+const reviewRoutes=require('./routes/reviews');
 
 //Connection to the database
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp',{
@@ -62,12 +63,13 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
+    res.locals.currentUser=req.user; //passport funciton that has the user infomation that is logged in or undefined
     next();
 })
 
-app.use('/campgrounds', campgrounds);//Whenever /campgrounds is hit use the routes in campgrounds routes
-app.use('/campgrounds/:id/reviews', reviews);//Whenever /campgrounds/:id/reviews is hit use the routes in reviews routes
-
+app.use('/campgrounds', campgroundRoutes);//Whenever /campgrounds is hit use the routes in campgrounds routes
+app.use('/campgrounds/:id/reviews', reviewRoutes);//Whenever /campgrounds/:id/reviews is hit use the routes in reviews routes
+app.use('/', userRoutes);
 
 //ROUTES
 //main
@@ -86,3 +88,4 @@ app.use((err, req, res, next) => {
 app.listen(3000, ()=>{
     console.log('App listening on port 3000')
 });
+
