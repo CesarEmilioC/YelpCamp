@@ -35,6 +35,7 @@ router.post("/register", catchAsync(async(req, res)=>{
 router.post("/login",passport.authenticate('local', {failureFlash:true, failureRedirect:'/login'}),(req, res)=>{
     req.flash('success', 'welcome to yelpcamp');
     const redirectUrl=req.session.returnTo || '/campgrounds'; //If the user was taken to login, after logging in it has to direct him to the page he was before
+    delete req.session.returnTo;
     res.redirect(redirectUrl);
     
 });
