@@ -3,6 +3,10 @@ const Review = require("./review");
 const Schema=mongoose.Schema;
 
 const CampgroundSchema=new Schema({
+    author:{
+        type:Schema.Types.ObjectId, 
+        ref:"User"
+    },
     title:{
         type:String,
     },
@@ -23,7 +27,7 @@ const CampgroundSchema=new Schema({
             type:Schema.Types.ObjectId, 
             ref:"Review"
         }
-    ]
+    ], 
 });
 
 //This is a middleware triggered when findOneAndDelete used to delete a campground, doc is what was deleted, in this case the campground

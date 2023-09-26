@@ -4,7 +4,8 @@ const catchAsync=require('../utils/catchAsync');
 const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
 const {campgroundSchema}=require('../schemas.js');
-const {isLoggedIn}= require('../middleware')
+const {isLoggedIn}= require('../middleware');
+
 const validateCampground=(req,res,next)=>{
     const { error } = campgroundSchema.validate(req.body); 
     if (error) {
@@ -25,15 +26,14 @@ router.get('/', catchAsync(async (req,res)=>{
 router.get('/new',isLoggedIn, (req,res)=>{
     res.render('./campground/new')
 });
-//post for sending data
-router.post('/', validateCampground,isLoggedIn, catchAsync(async (req,res)=>{ //Called when the form is sent
-    console.log(req.body.campground);
-    const {title, location, image, price, description}=req.body.campground; //In the new.ejs form we have title and location encapsulated in the campground[attribute]
-    const newCampground=new Campground({title:title, location:location, image:image, price:price, description:description});
-    let thiscamp=await newCampground.save();
+//Create a campground
+router.post('/',isLoggedIn, validateCampground, catchAsync(async (req,res)=>{ //Called when the form is sent
+    const newCampground=new Campground(req.body.campground);
+    newCampground.author=req.user._id;
+    await newCampground.save();
     req.flash('success', 'Camp was created successfully');
-    console.log(thiscamp);
-    //res.redirect(/${thiscamp._id}`);
+    console.log(newCampground);
+    res.redirect(`/campgrounds/${newCampground._id}`);
 }));
 //Edit a campground
 router.get('/:id/edit',isLoggedIn, catchAsync(async (req,res)=>{ //Called when button edit is clicked
@@ -47,7 +47,7 @@ router.get('/:id/edit',isLoggedIn, catchAsync(async (req,res)=>{ //Called when b
 
 //Single campground info
 router.get('/:id', catchAsync(async (req,res)=>{
-    const campground= await Campground.findById(req.params.id).populate('reviews');
+    const campground= await Campground.findById(req.params.id).populate('reviews').populate('author');
     if(!campground){
         req.flash('error', 'Campground was not found');
         res.redirect('/campgrounds');
