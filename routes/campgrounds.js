@@ -1,20 +1,9 @@
 const express=require('express');
 const router= express.Router({mergeParams:true});
 const catchAsync=require('../utils/catchAsync');
-const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
-const {campgroundSchema}=require('../schemas.js');
-const {isLoggedIn}= require('../middleware');
+const {isLoggedIn, isAuthor, validateCampground}= require('../middleware');
 
-const validateCampground=(req,res,next)=>{
-    const { error } = campgroundSchema.validate(req.body); 
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-}
 
 //show all campgrounds
 router.get('/', catchAsync(async (req,res)=>{
@@ -36,11 +25,12 @@ router.post('/',isLoggedIn, validateCampground, catchAsync(async (req,res)=>{ //
     res.redirect(`/campgrounds/${newCampground._id}`);
 }));
 //Edit a campground
-router.get('/:id/edit',isLoggedIn, catchAsync(async (req,res)=>{ //Called when button edit is clicked
-    const campground=await Campground.findById(req.params.id);
+router.get('/:id/edit',isLoggedIn,isAuthor, catchAsync(async (req,res)=>{ //Called when button edit is clicked
+    const {id}=req.params;
+    const campground=await Campground.findById(id);
     if(!campground){
         req.flash('error', 'Campground was not found');
-        res.redirect('/campgrounds');
+        return res.redirect('/campgrounds');
     }
     res.render('./campground/edit', {campground});
 }));
@@ -55,15 +45,15 @@ router.get('/:id', catchAsync(async (req,res)=>{
     res.render('./campground/show', {campground})
 }));
 //Update a campground
-router.put('/:id',isLoggedIn, validateCampground, catchAsync(async (req,res)=>{
+router.put('/:id',isLoggedIn, isAuthor, validateCampground, catchAsync(async (req,res)=>{
     const {title, location, image, price, description}=req.body.campground;
-    await Campground.findByIdAndUpdate(req.params.id,{title:title, location:location, image:image,price:price, description:description});
+    const campground=await Campground.findByIdAndUpdate(req.params.id,{title:title, location:location, image:image,price:price, description:description});
     req.flash('success', 'Camp was edited successfully');
     res.redirect(`./${req.params.id}`);
 }));
 //delete a campground
-router.delete('/:id',isLoggedIn, catchAsync(async (req,res)=>{ //Called when form delete is executed by the button delete
-    const campground=await Campground.findByIdAndDelete(req.params.id);
+router.delete('/:id',isLoggedIn,isAuthor, catchAsync(async (req,res)=>{ //Called when form delete is executed by the button delete
+    await Campground.findByIdAndDelete(req.params.id);
     res.redirect('/campgrounds');
 }));
 
