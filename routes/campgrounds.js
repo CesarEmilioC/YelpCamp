@@ -19,7 +19,7 @@ router.get('/:id/edit',isLoggedIn,isAuthor, catchAsync(campgrounds.renderEditCam
 
 router.route('/:id')
     .get(catchAsync(campgrounds.renderSingleCampground))
-    .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
+    .put(isLoggedIn, isAuthor, upload.array('images'), validateCampground, catchAsync(campgrounds.updateCampground))
     .delete(isLoggedIn,isAuthor, catchAsync(campgrounds.deleteCampground));
 
 module.exports=router;
