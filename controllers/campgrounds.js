@@ -1,3 +1,4 @@
+const { cloudinary } = require('../cloudinary');
 const Campground = require('../models/campground');
 
 //Render Campgrounds
@@ -63,4 +64,14 @@ module.exports.updateCampground= async(req,res)=>{
 module.exports.deleteCampground=async (req,res)=>{ //Called when form delete is executed by the button delete
     await Campground.findByIdAndDelete(req.params.id);
     res.redirect('/campgrounds');
+}
+
+//Delete an image
+module.exports.deleteImage=async (req,res)=>{ //Called when form delete is executed by the button delete
+    const campground= await Campground.findById(req.params.id);
+    const image=campground.images[req.params.imageNumber];
+    console.log("image to delete: ", image);
+    await cloudinary.uploader.destroy(image.filename);
+    await campground.updateOne({ $pull: { images: { filename: image.filename } } });
+    res.redirect(`/campgrounds/${req.params.id}/edit`)
 }
