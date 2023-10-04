@@ -38,35 +38,35 @@
                     </label>
                 </div>
             </div>
-            <div class="mb-3">
-                <div class="row">
-                    <label class="form-label" for="">Images</label>
-                <% campground.images.forEach(function(img, i) {  %>
-                    <div class="col-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <form id="formDeleteImage" action="/campgrounds/<%= campground._id %>/images/<%=i%>?_method=DELETE" method="POST">
-                                    <button form="formDeleteImage" class="btn btn-danger float-right">X</button>
-                                </form>
-                            </div>
-                            <div class="card-body">
-                                <img src="<%=img.url%>" class="img-thumbnail" alt="">
-                            </div>
-                        </div>
-                        
-                        
-                    </div>
-                        
-                        <% })%>     
-                </div>
-                
-                    
-            </div>
+            
             
             <div class="mb-3">
                 <button class="btn btn-info" form="formUpdateCampground">Update Campground</button>
             </div>
         </form>
+        <div class="mb-3">
+            <div class="row">
+                <label class="form-label" for="">Images</label>
+            <% campground.images.forEach(function(img, i) {  %>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <form id="formDeleteImage" action="/campgrounds/<%= campground._id %>/images?_method=DELETE" method="POST">
+                                <button value="<%=img.filename%>" name="filename" form="formDeleteImage" class="btn btn-danger float-right">X</button>
+                            </form>
+                        </div>
+                        <div class="card-body">
+                            <img src="<%=img.url%>" class="img-thumbnail" alt="img-<%=i%>">
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                    
+                    <% })%>     
+            </div>
+
+        </div>
         <a href="/campgrounds/<%= campground._id%>">Back To Campground</a>
 
     </div>

@@ -22,6 +22,6 @@ router.route('/:id')
     .put(isLoggedIn, isAuthor, upload.array('images'), validateCampground, catchAsync(campgrounds.updateCampground))
     .delete(isLoggedIn,isAuthor, catchAsync(campgrounds.deleteCampground));
 
-router.delete('/:id/images/:imageNumber', isLoggedIn, isAuthor, catchAsync(campgrounds.deleteImage))
+router.delete('/:id/images', isLoggedIn, isAuthor, catchAsync(campgrounds.deleteImage))
 
 module.exports=router;

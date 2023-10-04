@@ -68,10 +68,10 @@ module.exports.deleteCampground=async (req,res)=>{ //Called when form delete is 
 
 //Delete an image
 module.exports.deleteImage=async (req,res)=>{ //Called when form delete is executed by the button delete
+    const filename=req.body.filename;
+    console.log("Request done to delete image", req.params.imageNumber);
     const campground= await Campground.findById(req.params.id);
-    const image=campground.images[req.params.imageNumber];
-    console.log("image to delete: ", image);
-    await cloudinary.uploader.destroy(image.filename);
-    await campground.updateOne({ $pull: { images: { filename: image.filename } } });
+    await cloudinary.uploader.destroy(filename);
+    await campground.updateOne({ $pull: { images: { filename: filename } } });
     res.redirect(`/campgrounds/${req.params.id}/edit`)
 }
