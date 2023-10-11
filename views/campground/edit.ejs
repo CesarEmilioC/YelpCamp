@@ -53,18 +53,16 @@
                 <label class="form-label" for="">Images</label>
                 <div class="row overflow-auto scrollable">
                     <% campground.images.forEach(function(img, i) {  %>
-                        <div class="col-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <form id="formDeleteImage" action="/campgrounds/<%= campground._id %>/images?_method=DELETE" method="POST">
-                                        <button value="<%=img.filename%>" name="filename" form="formDeleteImage" class="btn btn-danger float-right">X</button>
-                                    </form>
-                                </div>
-                                <div class="card-body">
-                                    <img src="<%=img.url%>" class="img-thumbnail" alt="img-<%=i%>">
-                                </div>
+                        <div class="col-4" >
+                            <div class="relativePosition">
+                                <form id="formDeleteImage<%= i %>" action="/campgrounds/<%= campground._id %>/images?_method=DELETE" method="POST" >
+                                    <button value="<%= img.filename %>" name="filename" form="formDeleteImage<%= i %>" class="btn btn-danger topRightCornerButton">X</button>
+                                </form>
+                                <img src="<%= img.thumbnail %>" class="" alt="img-<%= i %>">
+                                
                             </div>
                             
+                            <!-- The "X" button is absolutely positioned on the top-right corner -->
                             
                         </div>
                             
