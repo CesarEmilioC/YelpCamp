@@ -26,6 +26,17 @@ const CampgroundSchema=new Schema({
     description:{
         type:String,
     },
+    geometry: { //FOR MAPBOX
+        type:{
+            type:String,
+            enum: ['Point'],
+            requires:true
+        }, 
+        coordinates:{
+            type:[Number], 
+            required:true
+        }
+    },
     location:{
         type:String
     },

@@ -78,7 +78,7 @@ app.use('/', userRoutes);
 //ROUTES
 //main
 app.get('/', (req,res)=>{
-    res.send("hello")
+    res.render('home')
 });
 
 app.use((err, req, res, next) => {

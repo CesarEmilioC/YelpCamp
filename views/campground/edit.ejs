@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/stylesheets/styles.css">
 <div class="row">
     <h1 class="text-center">Edit Campground</h1>
-    <div class="col-6">
+    <div class="col-sm-12 col-md-6">
         <form action="/campgrounds/<%=campground._id%>?_method=PUT" id="formUpdateCampground" method="POST" novalidate class="needs-validation" enctype="multipart/form-data" >
             <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
@@ -47,19 +47,18 @@
         
         <a href="/campgrounds/<%= campground._id%>">Back To Campground</a>
     </div>
-    <div class="col-6">
+    <div class="col-sm-12 col-md-6">
         <div class="mb-3">
             <div class="row">
                 <label class="form-label" for="">Images</label>
                 <div class="row overflow-auto scrollable">
                     <% campground.images.forEach(function(img, i) {  %>
-                        <div class="col-4" >
-                            <div class="relativePosition">
+                        <div class="col-12 col-md-6 col-lg-4" >
+                            <div class="imageContainer">
                                 <form id="formDeleteImage<%= i %>" action="/campgrounds/<%= campground._id %>/images?_method=DELETE" method="POST" >
                                     <button value="<%= img.filename %>" name="filename" form="formDeleteImage<%= i %>" class="btn btn-danger topRightCornerButton">X</button>
                                 </form>
-                                <img src="<%= img.thumbnail %>" class="" alt="img-<%= i %>">
-                                
+                                <img src="<%= img.thumbnail %>" class="" alt="img-<%= i %>">                               
                             </div>
                             
                             <!-- The "X" button is absolutely positioned on the top-right corner -->

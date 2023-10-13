@@ -3,8 +3,11 @@
     max-height: 500px;
   }
 
-.relativePosition{
+.imageContainer{
   position:relative;
+  width:200px;
+  margin-right:100px;
+  margin-bottom:10px;
 }
 
 .topRightCornerButton{
