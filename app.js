@@ -2,6 +2,7 @@
 if (process.env.NODE_ENV !== "production"){
     require('dotenv').config();
 }
+
 const express= require('express');
 const app=express();
 const path=require('path');
@@ -13,6 +14,7 @@ const flash=require('connect-flash');
 const passport=require('passport');
 const LocalStrategy=require('passport-local');
 const User= require('./models/user');
+const mongoSanitize=require('express-mongo-sanitize');
 
 const userRoutes=require('./routes/users');
 const campgroundRoutes=require('./routes/campgrounds');
@@ -40,7 +42,7 @@ app.engine('ejs', ejsMate);
 app.use(express.urlencoded({extended:true})); //This is needed to parse the req.body (What it does is every single request is being url encoded by express function)
 app.use(methodOverride('_method'));//To be able to fake PUT or PATCH requests
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(mongoSanitize());
 //FOR SESSION MANAGEMENT
 const sessionConfig={
     secret:"tomasSecret", 
